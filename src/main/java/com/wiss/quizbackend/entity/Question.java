@@ -29,6 +29,18 @@ public class Question {
     @Column(nullable = false, length = 32)
     private String difficulty;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_user_id")
+    private AppUser createdBy;
+
+    public AppUser getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(AppUser createdBy) {
+        this.createdBy = createdBy;
+    }
+
     // ✅ DEFAULT CONSTRUCTOR hinzufügen (für JPA/Hibernate):
     public Question(){}
 

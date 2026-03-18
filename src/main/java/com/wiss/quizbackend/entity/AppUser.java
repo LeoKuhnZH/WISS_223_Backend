@@ -33,6 +33,7 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
@@ -76,6 +77,8 @@ public class AppUser {
     public Role getRole() {
         return role;
     }
+
+
 
     public void setRole(Role role) {
         this.role = role;

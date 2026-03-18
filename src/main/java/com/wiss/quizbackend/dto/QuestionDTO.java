@@ -162,6 +162,7 @@ public class QuestionDTO {
      * @param category Kategorie aus den vordefinierten Werten
      * @param difficulty Schwierigkeitsgrad (easy, medium, hard)
      *
+     *
      * @apiNote Validation findet erst bei der Verwendung statt, nicht im Konstruktor
      */
     public QuestionDTO(Long id, String question, String correctAnswer, List<String> answers,

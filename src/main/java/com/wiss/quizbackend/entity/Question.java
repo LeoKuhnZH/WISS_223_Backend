@@ -54,12 +54,13 @@ public class Question {
      */
     public Question(String question, String correctAnswer,
                     List<String> incorrectAnswers, String category,
-                    String difficulty) {
+                    String difficulty, AppUser createdBy) {
         this.question = question;
         this.correctAnswer = correctAnswer;
         this.incorrectAnswers = incorrectAnswers;
         this.category = category;
         this.difficulty = difficulty;
+        this.createdBy = createdBy;
     }
 
     /**

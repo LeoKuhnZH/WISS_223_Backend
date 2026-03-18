@@ -76,7 +76,7 @@ public class QuestionFormDTO {
     @NotEmpty(message = "Falsche Antworten sind erforderlich")
     @Size(min = 3, max = 3, message = "Es müssen genau 3 falsche Antworten vorhanden sein")
     private List<@NotBlank(message = "Falsche Antworten dürfen nicht leer sein")
-        @Size(max = 100, message = "Antwort darf maximal 100 Zeichen haben") String> incorrectAnswers;
+    @Size(max = 100, message = "Antwort darf maximal 100 Zeichen haben") String> incorrectAnswers;
 
     /**
      * Die Kategorie der Frage.
@@ -97,6 +97,15 @@ public class QuestionFormDTO {
     private String difficulty;
 
     /**
+     * Der Ersteller der Frage.
+     */
+    @Schema(description = "Benutzername des Erstellers", example = "john_doe")
+    private String creatorUsername;
+
+    @Schema(description = "ID des Erstellers", example = "42")
+    private Long creatorId;
+
+    /**
      * Standard-Konstruktor für JSON-Deserialisierung.
      */
     public QuestionFormDTO() {}
@@ -109,33 +118,44 @@ public class QuestionFormDTO {
      * @param incorrectAnswers Liste mit genau 3 falschen Antworten
      * @param category Die Kategorie
      * @param difficulty Der Schwierigkeitsgrad
+     * @param creatorUsername Der Benutzername des Erstellers
+     * @param creatorId Die ID des Erstellers der Frage
      */
     public QuestionFormDTO(String question, String correctAnswer,
-                           List<String> incorrectAnswers, String category, String difficulty) {
+                           List<String> incorrectAnswers, String category,
+                           String difficulty, String creatorUsername, Long creatorId) {
         this.question = question;
         this.correctAnswer = correctAnswer;
         this.incorrectAnswers = incorrectAnswers;
         this.category = category;
         this.difficulty = difficulty;
+        this.creatorUsername = creatorUsername;
+        this.creatorId = creatorId;
     }
 
     /**
      *  Vollständiger Konstruktor für das Bearbeiten eines QuestionFormDTO.
      *
+     * @param id Die eindeutige ID der Frage (kann null für neue Fragen sein)
      * @param question Der Fragetext
      * @param correctAnswer Die korrekte Antwort
      * @param incorrectAnswers Liste mit genau 3 falschen Antworten
      * @param category Die Kategorie
      * @param difficulty Der Schwierigkeitsgrad
+     * @param creatorUsername Der Benutzername des Erstellers
+     * @param creatorId Die ID des Erstellers der Frage
      */
     public QuestionFormDTO(Long id, String question, String correctAnswer,
-                           List<String> incorrectAnswers, String category, String difficulty) {
+                           List<String> incorrectAnswers, String category,
+                           String difficulty, String creatorUsername, Long creatorId) {
         this.id = id;
         this.question = question;
         this.correctAnswer = correctAnswer;
         this.incorrectAnswers = incorrectAnswers;
         this.category = category;
         this.difficulty = difficulty;
+        this.creatorUsername = creatorUsername;
+        this.creatorId = creatorId;
     }
 
     // Getter und Setter
@@ -243,6 +263,22 @@ public class QuestionFormDTO {
         this.difficulty = difficulty;
     }
 
+    public String getCreatorUsername() {
+        return creatorUsername;
+    }
+
+    public void setCreatorUsername(String creatorUsername) {
+        this.creatorUsername = creatorUsername;
+    }
+
+    public Long getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(Long creatorId) {
+        this.creatorId = creatorId;
+    }
+
     /**
      * Konvertiert das FormDTO zu einem QuestionDTO für die Frontend-Anzeige.
      * <p>
@@ -262,29 +298,7 @@ public class QuestionFormDTO {
                 allAnswers, this.category, this.difficulty);
     }
 
-    /**
-     * Erstellt ein FormDTO aus einem bestehenden QuestionDTO.
-     * <p>
-     * Nützlich für Edit-Forms, um bestehende Daten zu laden.
-     * </p>
-     *
-     * @param questionDTO Das QuestionDTO zum Konvertieren
-     * @return FormDTO mit separaten incorrect answers
-     * @since 1.1
-     */
-    public static QuestionFormDTO fromQuestionDTO(QuestionDTO questionDTO) {
-        List<String> incorrectAnswers = questionDTO.getAnswers().stream()
-                .filter(answer -> !answer.equals(questionDTO.getCorrectAnswer()))
-                .collect(java.util.stream.Collectors.toList());
 
-        return new QuestionFormDTO(
-                questionDTO.getQuestion(),
-                questionDTO.getCorrectAnswer(),
-                incorrectAnswers,
-                questionDTO.getCategory(),
-                questionDTO.getDifficulty()
-        );
-    }
 
     /**
      * Erstellt eine String-Repräsentation des DTOs.
@@ -299,6 +313,8 @@ public class QuestionFormDTO {
                 ", incorrectAnswers=" + incorrectAnswers +
                 ", category='" + category + '\'' +
                 ", difficulty='" + difficulty + '\'' +
+                ", creatorUsername=" + creatorUsername + '\'' +
+                ", creatorId=" + creatorId.toString() +
                 '}';
     }
 }

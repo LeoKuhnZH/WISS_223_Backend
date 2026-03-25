@@ -73,3 +73,5 @@ Thumbs.db
 # Application Properties (falls sensitive Daten)
 # application-local.properties
 # application-dev.properties
+
+.env

@@ -16,12 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 
 /**
- * Spring Security Konfiguration - Der "Bauplan" für unser Sicherheitssystem
- *
- * Analogie: Das ist wie der Sicherheitsplan eines Bürogebäudes, der festlegt:
- * - Welche Bereiche sind öffentlich? (Empfangshalle)
- * - Welche Bereiche brauchen einen Ausweis? (Büros)
- * - Wo werden die Ausweis-Lesegeräte installiert? (JWT Filter)
+ * The type Security config.
  */
 @Configuration
 @EnableWebSecurity
@@ -30,16 +25,33 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    /**
+     * Instantiates a new Security config.
+     *
+     * @param jwtAuthenticationFilter the jwt authentication filter
+     */
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
 
+    /**
+     * Password encoder password encoder.
+     *
+     * @return the password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Authentication manager authentication manager.
+     *
+     * @param config the config
+     * @return the authentication manager
+     * @throws Exception the exception
+     */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
@@ -47,9 +59,13 @@ public class SecurityConfig {
     }
 
 
-
-
-
+    /**
+     * Security filter chain security filter chain.
+     *
+     * @param http the http
+     * @return the security filter chain
+     * @throws Exception the exception
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {

@@ -9,68 +9,24 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 /**
- * Data Transfer Object für Frontend-Formulare (Create UND Update).
- * <p>
- * Wird sowohl für das Erstellen neuer Fragen als auch für das Bearbeiten
- * bestehender Fragen verwendet. Die ID wird nur bei Updates über die URL übergeben,
- * nicht im Request Body.
- * </p>
- *
- * <p><strong>Verwendung:</strong></p>
- * <ul>
- *   <li>POST /api/questions/create - ID wird ignoriert (neue Frage)</li>
- *   <li>PUT /api/questions/{id}/update - ID kommt aus URL (Update)</li>
- * </ul>
- *
- * @author Johnny Krup
- * @version 1.0
- * @see QuestionDTO DTO für die Anzeige von Fragen im Quiz
- * @since 2025-07-01
+ * The type Question form dto.
  */
 @Schema(description = "DTO für Frontend-Formulare (Create/Update)")
 public class QuestionFormDTO {
 
-    /**
-     * Eindeutige ID der Frage.
-     * <p>
-     * Wird automatisch von der Datenbank generiert beim Speichern.
-     * Ist null bei neuen Fragen, die noch nicht gespeichert wurden.
-     * </p>
-     *
-     * @apiNote Wird bei POST-Requests ignoriert, bei PUT-Requests verwendet
-     */
     @Schema(description = "Eindeutige ID der Frage", example = "1")
     private Long id;
 
-    /**
-     * Der Text der Quiz-Frage.
-     * <p>
-     * Muss zwischen 5 und 500 Zeichen lang sein und darf nicht leer sein.
-     * </p>
-     */
     @Schema(description = "Der Frage-Text", example = "Was ist die Hauptstadt der Schweiz?")
     @NotBlank(message = "Frage Text ist erforderlich")
     @Size(min = 5, max = 500, message = "Frage muss zwischen 5 und 500 Zeichen sein")
     private String question;
 
-    /**
-     * Die korrekte Antwort auf die Frage.
-     * <p>
-     * Wird automatisch in die Antworten-Liste eingefügt beim Speichern.
-     * </p>
-     */
     @Schema(description = "Die korrekte Antwort", example = "Bern")
     @NotBlank(message = "Richtige Antwort ist erforderlich")
     @Size(max = 100, message = "Antwort darf maximal 100 Zeichen haben")
     private String correctAnswer;
 
-    /**
-     * Liste der falschen Antworten.
-     * <p>
-     * Muss genau 3 falsche Antworten enthalten. Diese werden zusammen
-     * mit der korrekten Antwort zu einer 4-Antworten-Liste kombiniert.
-     * </p>
-     */
     @Schema(description = "Die 3 falschen Antworten",
             example = "[\"Zürich\", \"Basel\", \"Genf\"]")
     @NotEmpty(message = "Falsche Antworten sind erforderlich")
@@ -78,27 +34,18 @@ public class QuestionFormDTO {
     private List<@NotBlank(message = "Falsche Antworten dürfen nicht leer sein")
     @Size(max = 100, message = "Antwort darf maximal 100 Zeichen haben") String> incorrectAnswers;
 
-    /**
-     * Die Kategorie der Frage.
-     */
     @Schema(description = "Die Kategorie der Frage", example = "geography")
     @NotBlank(message = "Kategorie ist erforderlich")
     @Pattern(regexp = "sports|games|movies|geography|science|history|biology|mathematics",
             message = "Kategorie muss eine der folgenden sein: sports, games, movies, geography, science, history, biology, mathematics")
     private String category;
 
-    /**
-     * Der Schwierigkeitsgrad der Frage.
-     */
     @Schema(description = "Der Schwierigkeitsgrad", example = "medium")
     @NotBlank(message = "Schwierigkeitsgrad ist erforderlich")
     @Pattern(regexp = "easy|medium|hard",
             message = "Schwierigkeitsgrad muss einer der folgenden sein: easy, medium, hard")
     private String difficulty;
 
-    /**
-     * Der Ersteller der Frage.
-     */
     @Schema(description = "Benutzername des Erstellers", example = "john_doe")
     private String creatorUsername;
 
@@ -106,21 +53,21 @@ public class QuestionFormDTO {
     private Long creatorId;
 
     /**
-     * Standard-Konstruktor für JSON-Deserialisierung.
+     * Instantiates a new Question form dto.
      */
     public QuestionFormDTO() {
     }
 
     /**
-     * Vollständiger Konstruktor für das Erstellen eines QuestionFormDTO.
+     * Instantiates a new Question form dto.
      *
-     * @param question         Der Fragetext
-     * @param correctAnswer    Die korrekte Antwort
-     * @param incorrectAnswers Liste mit genau 3 falschen Antworten
-     * @param category         Die Kategorie
-     * @param difficulty       Der Schwierigkeitsgrad
-     * @param creatorUsername  Der Benutzername des Erstellers
-     * @param creatorId        Die ID des Erstellers der Frage
+     * @param question         the question
+     * @param correctAnswer    the correct answer
+     * @param incorrectAnswers the incorrect answers
+     * @param category         the category
+     * @param difficulty       the difficulty
+     * @param creatorUsername  the creator username
+     * @param creatorId        the creator id
      */
     public QuestionFormDTO(String question, String correctAnswer,
                            List<String> incorrectAnswers, String category,
@@ -135,16 +82,16 @@ public class QuestionFormDTO {
     }
 
     /**
-     * Vollständiger Konstruktor für das Bearbeiten eines QuestionFormDTO.
+     * Instantiates a new Question form dto.
      *
-     * @param id               Die eindeutige ID der Frage (kann null für neue Fragen sein)
-     * @param question         Der Fragetext
-     * @param correctAnswer    Die korrekte Antwort
-     * @param incorrectAnswers Liste mit genau 3 falschen Antworten
-     * @param category         Die Kategorie
-     * @param difficulty       Der Schwierigkeitsgrad
-     * @param creatorUsername  Der Benutzername des Erstellers
-     * @param creatorId        Die ID des Erstellers der Frage
+     * @param id               the id
+     * @param question         the question
+     * @param correctAnswer    the correct answer
+     * @param incorrectAnswers the incorrect answers
+     * @param category         the category
+     * @param difficulty       the difficulty
+     * @param creatorUsername  the creator username
+     * @param creatorId        the creator id
      */
     public QuestionFormDTO(Long id, String question, String correctAnswer,
                            List<String> incorrectAnswers, String category,
@@ -162,138 +109,154 @@ public class QuestionFormDTO {
     // Getter und Setter
 
     /**
-     * Gibt die eindeutige ID der Frage zurück.
+     * Gets id.
      *
-     * @return Die Frage-ID oder null bei neuen Fragen
+     * @return the id
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * Setzt die eindeutige ID der Frage.
+     * Sets id.
      *
-     * @param id Die neue ID (kann null sein für neue Fragen)
+     * @param id the id
      */
     public void setId(Long id) {
         this.id = id;
     }
 
     /**
-     * Gibt den Fragetext zurück.
+     * Gets question.
      *
-     * @return Der Text der Frage
+     * @return the question
      */
     public String getQuestion() {
         return question;
     }
 
     /**
-     * Setzt den Fragetext.
+     * Sets question.
      *
-     * @param question Der neue Fragetext (5-500 Zeichen, nicht leer)
+     * @param question the question
      */
     public void setQuestion(String question) {
         this.question = question;
     }
 
     /**
-     * Gibt die korrekte Antwort zurück.
+     * Gets correct answer.
      *
-     * @return Die korrekte Antwort
+     * @return the correct answer
      */
     public String getCorrectAnswer() {
         return correctAnswer;
     }
 
     /**
-     * Setzt die korrekte Antwort.
+     * Sets correct answer.
      *
-     * @param correctAnswer Die neue korrekte Antwort (max. 100 Zeichen, nicht leer)
+     * @param correctAnswer the correct answer
      */
     public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 
     /**
-     * Gibt die Liste der falschen Antworten zurück.
+     * Gets incorrect answers.
      *
-     * @return Liste mit genau 3 falschen Antworten
+     * @return the incorrect answers
      */
     public List<String> getIncorrectAnswers() {
         return incorrectAnswers;
     }
 
     /**
-     * Setzt die Liste der falschen Antworten.
+     * Sets incorrect answers.
      *
-     * @param incorrectAnswers Liste mit genau 3 falschen Antworten, keine leer
+     * @param incorrectAnswers the incorrect answers
      */
     public void setIncorrectAnswers(List<String> incorrectAnswers) {
         this.incorrectAnswers = incorrectAnswers;
     }
 
     /**
-     * Gibt die Kategorie zurück.
+     * Gets category.
      *
-     * @return Die Kategorie der Frage
+     * @return the category
      */
     public String getCategory() {
         return category;
     }
 
     /**
-     * Setzt die Kategorie.
+     * Sets category.
      *
-     * @param category Die neue Kategorie (aus vordefinierten Werten)
+     * @param category the category
      */
     public void setCategory(String category) {
         this.category = category;
     }
 
     /**
-     * Gibt den Schwierigkeitsgrad zurück.
+     * Gets difficulty.
      *
-     * @return Der Schwierigkeitsgrad (easy, medium, hard)
+     * @return the difficulty
      */
     public String getDifficulty() {
         return difficulty;
     }
 
     /**
-     * Setzt den Schwierigkeitsgrad.
+     * Sets difficulty.
      *
-     * @param difficulty Der neue Schwierigkeitsgrad (easy, medium, hard)
+     * @param difficulty the difficulty
      */
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
 
+    /**
+     * Gets creator username.
+     *
+     * @return the creator username
+     */
     public String getCreatorUsername() {
         return creatorUsername;
     }
 
+    /**
+     * Sets creator username.
+     *
+     * @param creatorUsername the creator username
+     */
     public void setCreatorUsername(String creatorUsername) {
         this.creatorUsername = creatorUsername;
     }
 
+    /**
+     * Gets creator id.
+     *
+     * @return the creator id
+     */
     public Long getCreatorId() {
         return creatorId;
     }
 
+    /**
+     * Sets creator id.
+     *
+     * @param creatorId the creator id
+     */
     public void setCreatorId(Long creatorId) {
         this.creatorId = creatorId;
     }
 
     /**
-     * Konvertiert das FormDTO zu einem QuestionDTO für die Frontend-Anzeige.
-     * <p>
-     * Kombiniert correctAnswer und incorrectAnswers zu einer gemischten answers-Liste.
-     * </p>
+     * To question dto question dto.
      *
-     * @param id Die ID der Frage (für Updates)
-     * @return QuestionDTO für Frontend-Anzeige
-     * @since 1.1
+     * @param id the id
+     * @return the question dto
      */
     public QuestionDTO toQuestionDTO(Long id) {
         List<String> allAnswers = new java.util.ArrayList<>(this.incorrectAnswers);
@@ -305,11 +268,6 @@ public class QuestionFormDTO {
     }
 
 
-    /**
-     * Erstellt eine String-Repräsentation des DTOs.
-     *
-     * @return String-Darstellung für Debugging
-     */
     @Override
     public String toString() {
         return "QuestionFormDTO{" +

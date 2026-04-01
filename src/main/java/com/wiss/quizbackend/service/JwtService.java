@@ -14,49 +14,22 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Service für JWT Token Generation und Validation.
- * <p>
- * Verantwortlichkeiten:
- * - JWT Token generieren mit Claims
- * - Token validieren (Signatur + Expiration)
- * - Claims aus Token extrahieren
- *
- * JWT Struktur:
- * Header.Payload.Signature
- *
- * Claims (Payload) enthält:
- * - sub: Subject (Username)
- * - role: User Rolle
- * - iat: Issued At (Zeitpunkt der Erstellung)
- * - exp: Expiration (Ablaufzeit)
+ * The type Jwt service.
  */
 @Service
 public class JwtService {
-    /**
-     * Secret Key aus application.properties.
-     * WICHTIG: In Production als Environment Variable!
-     */
     @Value("${jwt.secret}")
     private String secretKey;
 
-    /**
-     * Token Gültigkeit in Millisekunden (24h = 86400000ms).
-     */
     @Value("${jwt.expiration}")
     private long expirationTime;
 
     /**
-     * Generiert einen JWT Token für einen User.
-     * <p>
-     * Claims die gesetzt werden:
-     * - sub: Username (Standard JWT Claim)
-     * - role: User Rolle (Custom Claim)
-     * - iat: Issued At Timestamp
-     * - exp: Expiration Timestamp
-     * </p>
-     * @param username Der Username des Users
-     * @param role Die Rolle des Users (ADMIN oder PLAYER)
-     * @return JWT Token als String
+     * Generate token string.
+     *
+     * @param username the username
+     * @param role     the role
+     * @return the string
      */
     public String generateToken(String username, String role) {
         // 1. Claims Map erstellen (Payload)
@@ -76,53 +49,48 @@ public class JwtService {
 
 
     /**
-     * Extrahiert den Username aus einem Token.
+     * Extract username string.
      *
-     * @param token Der JWT Token
-     * @return Der Username (Subject)
+     * @param token the token
+     * @return the string
      */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
     /**
-     * Extrahiert die Rolle aus einem Token.
+     * Extract role string.
      *
-     * @param token Der JWT Token
-     * @return Die Rolle als String
+     * @param token the token
+     * @return the string
      */
     public String extractRole(String token) {
         return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
     /**
-     * Extrahiert das Expiration Date aus einem Token.
+     * Extract expiration date.
      *
-     * @param token Der JWT Token
-     * @return Das Ablaufdatum
+     * @param token the token
+     * @return the date
      */
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
     /**
-     * Generische Methode um einen spezifischen Claim zu extrahieren.
+     * Extract claim t.
      *
-     * @param token Der JWT Token
-     * @param claimsResolver Function die den Claim extrahiert
-     * @return Der extrahierte Claim
+     * @param <T>            the type parameter
+     * @param token          the token
+     * @param claimsResolver the claims resolver
+     * @return the t
      */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    /**
-     * Extrahiert alle Claims aus einem Token.
-     *
-     * @param token Der JWT Token
-     * @return Alle Claims
-     */
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -131,26 +99,16 @@ public class JwtService {
                 .getBody();
     }
 
-    /**
-     * Prüft, ob ein Token abgelaufen ist.
-     *
-     * @param token Der JWT Token
-     * @return true wenn abgelaufen
-     */
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
     /**
-     * Validiert einen Token.
+     * Validate token boolean.
      *
-     * Prüft:
-     * 1. Username stimmt mit dem User überein
-     * 2. Token ist nicht abgelaufen
-     *
-     * @param token Der JWT Token
-     * @param username Der Username zum Vergleich
-     * @return true wenn Token gültig
+     * @param token    the token
+     * @param username the username
+     * @return the boolean
      */
     public Boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
@@ -158,13 +116,6 @@ public class JwtService {
                 !isTokenExpired(token));
     }
 
-    /**
-     * Erstellt den Signing Key aus dem Secret String.
-     *
-     * HMAC SHA256 benötigt mindestens 256 Bit (32 Bytes).
-     *
-     * @return Der Signing Key
-     */
     private Key getSigningKey() {
         byte[] keyBytes = secretKey.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);

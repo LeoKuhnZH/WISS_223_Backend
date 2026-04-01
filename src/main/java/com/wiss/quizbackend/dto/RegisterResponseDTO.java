@@ -1,17 +1,7 @@
 package com.wiss.quizbackend.dto;
 
 /**
- * Data Transfer Object für Registration Response.
- *
- * Wichtige Regeln:
- * - NIEMALS das Passwort zurückgeben
- * - Nur Informationen die der Client braucht
- * - Immutable (finale Felder) für Sicherheit
- *
- * Diese DTO ist immutable (unveränderlich):
- * - Alle Felder sind final
- * - Nur Getter, keine Setter
- * - Thread-safe
+ * The type Register response dto.
  */
 public class RegisterResponseDTO {
 
@@ -22,12 +12,12 @@ public class RegisterResponseDTO {
     private final String message;
 
     /**
-     * Constructor für erfolgreiche Registration.
+     * Instantiates a new Register response dto.
      *
-     * @param id Die generierte User ID
-     * @param username Der registrierte Username
-     * @param email Die registrierte Email
-     * @param role Die zugewiesene Rolle
+     * @param id       the id
+     * @param username the username
+     * @param email    the email
+     * @param role     the role
      */
     public RegisterResponseDTO(Long id, String username,
                                String email, String role) {
@@ -42,22 +32,47 @@ public class RegisterResponseDTO {
     // Nur Getters, keine Setters (Immutable!)
 
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Gets username.
+     *
+     * @return the username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Gets email.
+     *
+     * @return the email
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Gets role.
+     *
+     * @return the role
+     */
     public String getRole() {
         return role;
     }
 
+    /**
+     * Gets message.
+     *
+     * @return the message
+     */
     public String getMessage() {
         return message;
     }

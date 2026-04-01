@@ -16,19 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * JWT Authentication Filter - Das "Ausweis-Lesegerät" unserer Applikation
- *
- * Dieser Filter wird bei JEDEM Request ausgeführt und macht folgendes:
- * 1. Schaut ob ein JWT Token im Authorization Header ist
- * 2. Validiert den Token (Signatur, Ablaufdatum)
- * 3. Lädt den User aus der Datenbank
- * 4. Setzt den User in den SecurityContext (Spring weiss jetzt: User ist eingeloggt!)
- *
- * Analogie: Das Ausweis-Lesegerät am Aufzug
- * - Liest den Ausweis (Token)
- * - Prüft ob er echt und gültig ist
- * - Identifiziert die Person
- * - Öffnet die Tür (oder nicht)
+ * The type Jwt authentication filter.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -37,14 +25,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
 
-
-
-
-
     /**
-     * Constructor Injection - Spring gibt uns automatisch:
-     * - JwtService (zum Token validieren)
-     * - UserDetailsService (zum User laden)
+     * Instantiates a new Jwt authentication filter.
+     *
+     * @param jwtService         the jwt service
+     * @param userDetailsService the user details service
      */
     public JwtAuthenticationFilter(JwtService jwtService,
                                    UserDetailsService userDetailsService) {
@@ -52,13 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-    /**
-     * Diese Methode wird bei JEDEM Request ausgeführt!
-     *
-     * @param request  Der eingehende HTTP Request
-     * @param response Die HTTP Response
-     * @param filterChain Die Chain von weiteren Filtern
-     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,

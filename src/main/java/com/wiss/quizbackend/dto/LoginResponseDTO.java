@@ -1,18 +1,7 @@
 package com.wiss.quizbackend.dto;
 
 /**
- * DTO für Login Response.
- *
- * Enthält:
- * - JWT Token für Authentication
- * - User Informationen (ohne Passwort!)
- * - Token Type (Bearer)
- * - Expiration Time
- *
- * Wichtig:
- * - IMMUTABLE (alle Felder final)
- * - Kein Passwort zurückgeben (Security!)
- * - Token Type "Bearer" ist Standard für JWT
+ * The type Login response dto.
  */
 public class LoginResponseDTO {
 
@@ -25,15 +14,14 @@ public class LoginResponseDTO {
     private final long expiresIn;  // in Millisekunden
 
     /**
-     * Constructor für erfolgreichen Login.
+     * Instantiates a new Login response dto.
      *
-     * @param token Der generierte JWT Token
-     * @param userId Die User ID
-     * @param username Der Username
-     * @param email Die Email
-     * @param role Die Rolle (ADMIN oder PLAYER)
-     * @param expiresIn Token Gültigkeit in ms
-    (normalerweise 86400000 = 24h)
+     * @param token     the token
+     * @param userId    the user id
+     * @param username  the username
+     * @param email     the email
+     * @param role      the role
+     * @param expiresIn the expires in
      */
     public LoginResponseDTO(String token, Long userId, String username,
                             String email, String role, long expiresIn) {
@@ -45,31 +33,66 @@ public class LoginResponseDTO {
         this.expiresIn = expiresIn;
     }
 
-    // Nur Getters (Immutable!)
+    /**
+     * Gets token.
+     *
+     * @return the token
+     */
+// Nur Getters (Immutable!)
     public String getToken() {
         return token;
     }
 
+    /**
+     * Gets token type.
+     *
+     * @return the token type
+     */
     public String getTokenType() {
         return TOKEN_TYPE;
     }
 
+    /**
+     * Gets user id.
+     *
+     * @return the user id
+     */
     public Long getUserId() {
         return userId;
     }
 
+    /**
+     * Gets username.
+     *
+     * @return the username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Gets email.
+     *
+     * @return the email
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Gets role.
+     *
+     * @return the role
+     */
     public String getRole() {
         return role;
     }
 
+    /**
+     * Gets expires in.
+     *
+     * @return the expires in
+     */
     public long getExpiresIn() {
         return expiresIn;
     }
@@ -79,11 +102,6 @@ public class LoginResponseDTO {
 
 
 
-    /**
-     * toString mit HIDDEN Token (Security!)
-     *
-     * Token sollte nicht geloggt werden - könnte gestohlen werden!
-     */
     @Override
     public String toString() {
         return "LoginResponseDTO{" +

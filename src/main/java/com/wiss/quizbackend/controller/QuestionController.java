@@ -3,10 +3,6 @@ package com.wiss.quizbackend.controller;
 import com.wiss.quizbackend.dto.QuestionDTO;
 import com.wiss.quizbackend.dto.QuestionFormDTO;
 import com.wiss.quizbackend.entity.Question;
-import com.wiss.quizbackend.exception.CategoryNotFoundException;
-import com.wiss.quizbackend.exception.DifficultyNotFoundException;
-import com.wiss.quizbackend.exception.InvalidQuestionDataException;
-import com.wiss.quizbackend.exception.QuestionNotFoundException;
 import com.wiss.quizbackend.service.QuestionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,49 +10,33 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
- * REST-Controller für die Verwaltung von Quiz-Fragen.
- * <p>
- * Dieser Controller stellt HTTP-Endpoints für CRUD-Operationen auf Quiz-Fragen bereit.
- * Alle Endpoints arbeiten mit QuestionDTO-Objekten für die Datenübertragung.
- * </p>
- *
- * <p><strong>Verfügbare Operationen:</strong></p>
- * <ul>
- *   <li>Fragen abrufen (alle, nach ID, Kategorie, Schwierigkeit)</li>
- *   <li>Fragen erstellen, aktualisieren und löschen</li>
- *   <li>Erweiterte Funktionen: Suche, Filter, Statistiken</li>
- * </ul>
- *
- * @author Johnny Krup
- * @version 1.0
- * @see QuestionService
- * @see QuestionDTO
- * @since 2025-06-01
+ * The type Question controller.
  */
 @RestController
 @RequestMapping("/api/questions")
-@Tag(name = "Questions", description = "CRUD Operations für Quiz-Fragen")
+@Tag(name="Questions", description = "CRUD Operations für Quiz-Fragen")
 public class QuestionController {
     private final QuestionService service;
 
     /**
-     * Erstellt einen neuen QuestionController mit dem angegebenen Service.
+     * Instantiates a new Question controller.
      *
-     * @param service Der QuestionService für die Geschäftslogik
+     * @param service the service
      */
     public QuestionController(QuestionService service) {
         this.service = service;
     }
 
     /**
-     * Ruft alle verfügbaren Quiz-Fragen ab.
+     * Gets all questions.
      *
-     * @return Liste aller Fragen als DTOs
+     * @return the all questions
      */
     @GetMapping
     @Operation(
@@ -64,14 +44,15 @@ public class QuestionController {
             description = "Gibt alle verfügbaren Quiz-Fragen zurück"
     )
     @ApiResponse(responseCode = "200", description = "Liste erfolgreich abgerufen")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PLAYER')")
     public List<QuestionDTO> getAllQuestions() {
         return service.getAllQuestionsAsDTO();
     }
 
     /**
-     * Ruft alle verfügbaren Quiz-Fragen ab.
+     * Gets all form questions.
      *
-     * @return Liste aller Fragen als DTOs
+     * @return the all form questions
      */
     @GetMapping("/all")
     @Operation(
@@ -79,17 +60,16 @@ public class QuestionController {
             description = "Gibt alle verfügbaren Quiz-Fragen zurück"
     )
     @ApiResponse(responseCode = "200", description = "Liste erfolgreich abgerufen")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PLAYER')")
     public List<QuestionFormDTO> getAllFormQuestions() {
         return service.getAllQuestionsAsFormDTO();
     }
 
     /**
-     * Ruft eine spezifische Frage anhand ihrer ID ab.
+     * Gets question by id.
      *
-     * @param id Die eindeutige ID der gewünschten Frage
-     * @return Die gefundene Frage als DTO
-     * @throws QuestionNotFoundException wenn keine Frage mit der ID existiert
-     * @throws IllegalArgumentException  wenn die ID ungültig ist (null oder negativ)
+     * @param id the id
+     * @return the question by id
      */
     @GetMapping("/{id}")
     @Operation(
@@ -99,6 +79,7 @@ public class QuestionController {
     @ApiResponse(responseCode = "200", description = "Frage gefunden")
     @ApiResponse(responseCode = "404", description = "Frage nicht gefunden")
     @ApiResponse(responseCode = "400", description = "Ungültige ID übergeben")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PLAYER')")
     public QuestionDTO getQuestionById(
             @Parameter(
                     description = "Die eindeutige ID der gewünschten Frage",
@@ -110,12 +91,10 @@ public class QuestionController {
     }
 
     /**
-     * Ruft eine spezifische Frage anhand ihrer ID ab formatiert für das Frontend-Formular.
+     * Gets question by id for edit.
      *
-     * @param id Die eindeutige ID der gewünschten Frage
-     * @return Die gefundene Frage als FormDTO
-     * @throws QuestionNotFoundException wenn keine Frage mit der ID existiert
-     * @throws IllegalArgumentException  wenn die ID ungültig ist (null oder negativ)
+     * @param id the id
+     * @return the question by id for edit
      */
     @GetMapping("/{id}/edit")
     @Operation(
@@ -125,16 +104,16 @@ public class QuestionController {
     @ApiResponse(responseCode = "200", description = "Frage gefunden")
     @ApiResponse(responseCode = "404", description = "Frage nicht gefunden")
     @ApiResponse(responseCode = "400", description = "Ungültige ID übergeben")
+    @PreAuthorize("hasRole('ADMIN')") // ← NEU! Nur ADMIN sieht Edit-Form
     public QuestionFormDTO getQuestionByIdForEdit(@PathVariable Long id) {
         return service.getQuestionByIdAsFormDTO(id);
     }
 
     /**
-     * Ruft alle Fragen einer bestimmten Kategorie ab.
+     * Gets questions by category.
      *
-     * @param category Die Kategorie (z.B. "sports", "geography", "science")
-     * @return Liste der Fragen der angegebenen Kategorie
-     * @throws CategoryNotFoundException wenn die Kategorie ungültig ist
+     * @param category the category
+     * @return the questions by category
      */
     @GetMapping("/category/{category}")
     @Operation(
@@ -142,6 +121,7 @@ public class QuestionController {
             description = "Gibt alle Fragen einer bestimmten Kategorie zurück"
     )
     @ApiResponse(responseCode = "200", description = "Ergebnisse nach Kategorie zurückgegeben")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PLAYER')")
     public List<QuestionDTO> getQuestionsByCategory(
             @Parameter(description = "Kategorie", example = "sports", required = true)
             @PathVariable String category) {
@@ -149,11 +129,10 @@ public class QuestionController {
     }
 
     /**
-     * Ruft alle Fragen einer bestimmten Schwierigkeit ab.
+     * Gets questions by difficulty.
      *
-     * @param difficulty Der Schwierigkeitsgrad ("easy", "medium", "hard")
-     * @return Liste der Fragen mit der angegebenen Schwierigkeit
-     * @throws DifficultyNotFoundException wenn der Schwierigkeitsgrad ungültig ist
+     * @param difficulty the difficulty
+     * @return the questions by difficulty
      */
     @GetMapping("/difficulty/{difficulty}")
     @Operation(
@@ -161,6 +140,7 @@ public class QuestionController {
             description = "Gibt alle Fragen einer bestimmten Schwierigkeit zurück"
     )
     @ApiResponse(responseCode = "200", description = "Ergebnisse nach Schwierigkeit zurückgegeben")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PLAYER')")
     public List<QuestionDTO> getQuestionsByDifficulty(
             @Parameter(description = "Schwierigkeit", example = "easy", required = true)
             @PathVariable String difficulty) {
@@ -168,15 +148,10 @@ public class QuestionController {
     }
 
     /**
-     * Erstellt eine neue Quiz-Frage.
-     * <p>
-     * Validiert die Eingabedaten automatisch durch @Valid-Annotation
-     * und gibt die erstellte Frage mit generierter ID zurück.
-     * </p>
+     * Create question question dto.
      *
-     * @param questionDTO Die zu erstellende Frage (ID wird ignoriert)
-     * @return Die erstellte Frage mit generierter ID*
-     * @throws InvalidQuestionDataException bei ungültigen Daten
+     * @param questionDTO the question dto
+     * @return the question dto
      */
     @PostMapping
     @Operation(
@@ -186,28 +161,25 @@ public class QuestionController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponse(responseCode = "201", description = "Frage erfolgreich erstellt")
     @ApiResponse(responseCode = "400", description = "Ungültige Eingabedaten")
+    @PreAuthorize("hasRole('ADMIN')") // ← NEU! Nur Admins dürfen Fragen erstellen
     public QuestionDTO createQuestion(
             @Parameter(description = "Frage-Daten", required = true)
-            @Valid @RequestBody QuestionDTO questionDTO) { // ← @Valid hinzufügen!
+            @Valid @RequestBody QuestionDTO questionDTO){ // ← @Valid hinzufügen!
         return service.createQuestion(questionDTO);
     }
 
     /**
-     * Erstellt eine neue Quiz-Frage.
-     * <p>
-     * Validiert die Eingabedaten automatisch durch @Valid-Annotation
-     * und gibt die erstellte Frage mit generierter ID zurück.
-     * </p>
+     * Create question from form question form dto.
      *
-     * @param question die Frage-Daten aus dem Formular
-     * @return Die erstellte Frage mit generierter ID*
-     * @throws InvalidQuestionDataException bei ungültigen Daten
+     * @param question the question
+     * @return the question form dto
      */
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Neue Frage erstellen über Frontend-Form")
     @ApiResponse(responseCode = "201", description = "Frage erfolgreich erstellt")
     @ApiResponse(responseCode = "400", description = "Ungültige Eingabedaten")
+    @PreAuthorize("hasRole('ADMIN')") // ← NEU! Nur Admins dürfen Fragen erstellen
     public QuestionFormDTO createQuestionFromForm(
             @Parameter(description = "Frage-Daten", required = true)
             @Valid @RequestBody Question question) {
@@ -216,12 +188,11 @@ public class QuestionController {
 
 
     /**
-     * Aktualisiert eine bestehende Quiz-Frage.
+     * Update question question dto.
      *
-     * @param id          Die ID der zu aktualisierenden Frage
-     * @param questionDTO Die aktualisierten Frage-Daten
-     * @return Die aktualisierte Frage
-     * @throws QuestionNotFoundException wenn die Frage nicht existiert*
+     * @param id          the id
+     * @param questionDTO the question dto
+     * @return the question dto
      */
     @PutMapping("/{id}")
     @Operation(
@@ -230,20 +201,20 @@ public class QuestionController {
     )
     @ApiResponse(responseCode = "200", description = "Frage erfolgreich editiert")
     @ApiResponse(responseCode = "400", description = "Ungültige Eingabedaten")
+    @PreAuthorize("hasRole('ADMIN')") // ← NEU! Nur Admins dürfen Fragen editieren
     public QuestionDTO updateQuestion(
             @Parameter(description = "ID der zu aktualisierenden Frage", example = "1")
             @PathVariable Long id,
-            @Valid @RequestBody QuestionDTO questionDTO) {
+            @Valid @RequestBody QuestionDTO questionDTO){
         return service.updateQuestion(id, questionDTO);
     }
 
     /**
-     * Aktualisiert eine bestehende Quiz-Frage.
+     * Update question from form question form dto.
      *
-     * @param id       Die ID der zu aktualisierenden Frage
-     * @param question Die aktualisierten Frage-Daten des Formulars
-     * @return Die aktualisierte Frage
-     * @throws QuestionNotFoundException wenn die Frage nicht existiert*
+     * @param id       the id
+     * @param question the question
+     * @return the question form dto
      */
     @PutMapping("/{id}/update")
     @Operation(
@@ -252,6 +223,7 @@ public class QuestionController {
     )
     @ApiResponse(responseCode = "200", description = "Frage erfolgreich editiert")
     @ApiResponse(responseCode = "400", description = "Ungültige Eingabedaten")
+    @PreAuthorize("hasRole('ADMIN')") // ← NEU! Nur Admins dürfen Fragen editieren
     public QuestionFormDTO updateQuestionFromForm(
             @Parameter(description = "ID der zu aktualisierenden Frage", example = "1")
             @PathVariable Long id,
@@ -260,13 +232,9 @@ public class QuestionController {
     }
 
     /**
-     * Löscht eine Quiz-Frage permanent.
-     * <p>
-     * <strong>Warnung:</strong> Diese Aktion kann nicht rückgängig gemacht werden!
-     * </p>
+     * Delete question.
      *
-     * @param id Die ID der zu löschenden Frage
-     * @throws QuestionNotFoundException wenn die Frage nicht existiert
+     * @param id the id
      */
     @DeleteMapping("/{id}")
     @Operation(
@@ -277,6 +245,7 @@ public class QuestionController {
     @ApiResponse(responseCode = "200", description = "Frage erfolgreich gelöscht")
     @ApiResponse(responseCode = "404", description = "Frage nicht gefunden")
     @ApiResponse(responseCode = "409", description = "Frage wird noch in aktiven Quiz verwendet")
+    @PreAuthorize("hasRole('ADMIN')") // ← NEU! Nur Admins dürfen Fragen löschen
     public void deleteQuestion(
             @Parameter(description = "ID der zu löschenden Frage", example = "1")
             @PathVariable Long id) {
@@ -284,17 +253,14 @@ public class QuestionController {
     }
 
     /**
-     * Ruft Fragen basierend auf kombinierten Filtern ab.
-     * <p>
-     * Unterstützt Filterung nach Kategorie und/oder Schwierigkeit.
-     * Wenn keine Filter angegeben werden, werden alle Fragen zurückgegeben.
-     * </p>
+     * Gets questions by filter.
      *
-     * @param category   Die Kategorie (optional)
-     * @param difficulty Der Schwierigkeitsgrad (optional)
-     * @return Liste der gefilterten Fragen
+     * @param category   the category
+     * @param difficulty the difficulty
+     * @return the questions by filter
      */
     @GetMapping("/filter")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PLAYER')")
     public List<QuestionDTO> getQuestionsByFilter(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String difficulty) {
@@ -311,21 +277,17 @@ public class QuestionController {
     }
 
     /**
-     * Durchsucht Fragen basierend auf einem Suchbegriff.
-     * <p>
-     * Sucht im Fragetext und in den Antworten nach dem angegebenen Begriff.
-     * Die Suche ist case-insensitive.
-     * </p>
+     * Search questions list.
      *
-     * @param q Der Suchbegriff
-     * @return Liste der Fragen, die den Suchbegriff enthalten
-     * @throws IllegalArgumentException wenn der Suchbegriff leer ist
+     * @param q the q
+     * @return the list
      */
     @GetMapping("/search")
     @Operation(
             summary = "Fragen durchsuchen",
             description = "Sucht Fragen basierend auf einem Suchbegriff"
     )
+    @PreAuthorize("hasAnyRole('ADMIN', 'PLAYER')")
     public List<QuestionDTO> searchQuestions(
             @Parameter(description = "Suchbegriff", example = "Schweiz")
             @RequestParam String q) {
@@ -333,17 +295,17 @@ public class QuestionController {
     }
 
     /**
-     * Zählt die Anzahl Fragen einer bestimmten Kategorie.
+     * Gets question count by category.
      *
-     * @param category Die Kategorie
-     * @return Anzahl der Fragen in der Kategorie
-     * @throws CategoryNotFoundException wenn die Kategorie ungültig ist
+     * @param category the category
+     * @return the question count by category
      */
     @GetMapping("/stats/category/{category}")
     @Operation(
             summary = "Anzahl Fragen nach Kategorie",
             description = "Zählt die Anzahl Fragen einer bestimmten Kategorie zusammen"
     )
+    @PreAuthorize("hasAnyRole('ADMIN', 'PLAYER')")
     public long getQuestionCountByCategory(
             @Parameter(description = "Kategorie", example = "history")
             @PathVariable String category) {
@@ -351,28 +313,24 @@ public class QuestionController {
     }
 
     /**
-     * Ruft eine zufällige Auswahl von Fragen einer Kategorie ab.
-     * <p>
-     * Nützlich für Quiz-Spiele, um verschiedene Fragen pro Runde zu erhalten.
-     * </p>
+     * Gets random questions.
      *
-     * @param category Die Kategorie der Fragen
-     * @param limit    Die maximale Anzahl Fragen (Standard: 5)
-     * @return Liste zufälliger Fragen der angegebenen Kategorie
-     * @throws CategoryNotFoundException wenn die Kategorie ungültig ist
-     * @throws IllegalArgumentException  wenn limit kleiner als 1 ist
+     * @param category the category
+     * @param limit    the limit
+     * @return the random questions
      */
     @GetMapping("/random")
     @Operation(
             summary = "Zufällige Anzahl Fragen nach Kategorie",
             description = "Gibt eine zufällige Anzahl an Fragen zurück"
     )
+    @PreAuthorize("hasAnyRole('ADMIN', 'PLAYER')")
     public List<QuestionDTO> getRandomQuestions(
             @Parameter(description = "Kategorie", example = "movies")
             @RequestParam String category,
             @Parameter(description = "Anzahl", example = "3")
             @RequestParam(defaultValue = "5") int limit) {
-        if (category != null) {
+        if(category != null){
             return service.getRandomQuestionsByCategory(category, limit);
         } else {
             return service.getRandomQuestions(limit);
@@ -380,11 +338,12 @@ public class QuestionController {
     }
 
     /**
-     * Zählt die Gesamtanzahl aller verfügbaren Fragen.
+     * Gets questions count.
      *
-     * @return Gesamtanzahl der Fragen in der Datenbank
+     * @return the questions count
      */
     @GetMapping("/count")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PLAYER')")
     @Operation(
             summary = "Anzahl aller Fragen",
             description = "Gibt die Anzahl aller verfügbaen Fragen zurück"

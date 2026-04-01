@@ -3,6 +3,7 @@ package com.wiss.quizbackend.exception;
 import com.wiss.quizbackend.dto.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,9 +13,19 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The type Global exception handler.
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Handle question not found response entity.
+     *
+     * @param ex      the ex
+     * @param request the request
+     * @return the response entity
+     */
     @ExceptionHandler(QuestionNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleQuestionNotFound(
             QuestionNotFoundException ex, WebRequest request) {
@@ -29,6 +40,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Handle invalid question data response entity.
+     *
+     * @param ex      the ex
+     * @param request the request
+     * @return the response entity
+     */
     @ExceptionHandler(InvalidQuestionDataException.class)
     public ResponseEntity<ErrorResponseDTO> handleInvalidQuestionData(
             InvalidQuestionDataException ex, WebRequest request) {
@@ -43,6 +61,34 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handle access denied response entity.
+     *
+     * @param ex      the ex
+     * @param request the request
+     * @return the response entity
+     */
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAccessDenied(
+            AuthorizationDeniedException ex, WebRequest request) {
+
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                "ACCESS_DENIED",
+                "Zugriff verweigert. Sie haben nicht die erforderlichen Berechtigungen.",
+                403,
+                extractPath(request)
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+    /**
+     * Handle category not found response entity.
+     *
+     * @param ex      the ex
+     * @param request the request
+     * @return the response entity
+     */
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleCategoryNotFound(
             CategoryNotFoundException ex, WebRequest request) {
@@ -58,6 +104,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handle difficulty not found response entity.
+     *
+     * @param ex      the ex
+     * @param request the request
+     * @return the response entity
+     */
     @ExceptionHandler(DifficultyNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleDifficultyNotFound(
             DifficultyNotFoundException ex, WebRequest request) {
@@ -73,6 +126,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handle illegal argument response entity.
+     *
+     * @param ex      the ex
+     * @param request the request
+     * @return the response entity
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponseDTO> handleIllegalArgument(
             IllegalArgumentException ex, WebRequest request) {
@@ -87,6 +147,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handle general exception response entity.
+     *
+     * @param ex      the ex
+     * @param request the request
+     * @return the response entity
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGeneralException(
             Exception ex, WebRequest request) {
@@ -105,6 +172,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    /**
+     * Handle validation errors response entity.
+     *
+     * @param ex      the ex
+     * @param request the request
+     * @return the response entity
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidationErrors(
             MethodArgumentNotValidException ex, WebRequest request) {
@@ -128,12 +202,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * Extrahiert den API-Pfad aus dem WebRequest.
-     *
-     * @param request
-     * @return
-     */
     private String extractPath(WebRequest request) {
         return request.getDescription(false).replace("uri=", "");
     }

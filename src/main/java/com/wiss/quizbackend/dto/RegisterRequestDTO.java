@@ -5,17 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * Data Transfer Object für Registration Requests.
- *
- * Zweck:
- * - Definiert was der Client senden muss
- * - Validation Rules für Input
- * - Keine internen Felder (id, version, createdAt)
- *
- * Bean Validation Annotations:
- * - @NotBlank: Nicht null, nicht leer, nicht nur Whitespace
- * - @Size: Min/Max Länge
- * - @Email: Valide Email-Adresse
+ * The type Register request dto.
  */
 public class RegisterRequestDTO {
 
@@ -32,10 +22,20 @@ public class RegisterRequestDTO {
     @Size(min = 6, message = "Passwort muss mindestens 6 Zeichen haben")
     private String password;
 
-    // Default Constructor für JSON Deserialization
+    /**
+     * Instantiates a new Register request dto.
+     */
+// Default Constructor für JSON Deserialization
     public RegisterRequestDTO() {}
 
-    // Constructor mit allen Feldern (für Tests)
+    /**
+     * Instantiates a new Register request dto.
+     *
+     * @param username the username
+     * @param email    the email
+     * @param password the password
+     */
+// Constructor mit allen Feldern (für Tests)
     public RegisterRequestDTO(String username, String email,
                               String password) {
         this.username = username;
@@ -46,26 +46,56 @@ public class RegisterRequestDTO {
     // Getters und Setters
 
 
+    /**
+     * Gets username.
+     *
+     * @return the username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Sets username.
+     *
+     * @param username the username
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Gets email.
+     *
+     * @return the email
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Sets email.
+     *
+     * @param email the email
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * Gets password.
+     *
+     * @return the password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Sets password.
+     *
+     * @param password the password
+     */
     public void setPassword(String password) {
         this.password = password;
     }

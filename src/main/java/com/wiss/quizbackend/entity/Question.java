@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
+/**
+ * The type Question.
+ */
 @Entity                                     // ← "Das wird eine Datenbank-Tabelle"
 @Table(name = "questions")                  // ← "Tabelle soll 'questions' heissen (Optional)"
 public class Question {
@@ -33,18 +36,22 @@ public class Question {
     @JoinColumn(name = "created_by_user_id")
     private AppUser createdBy;
 
-    // ✅ DEFAULT CONSTRUCTOR hinzufügen (für JPA/Hibernate):
+    /**
+     * Instantiates a new Question.
+     */
+// ✅ DEFAULT CONSTRUCTOR hinzufügen (für JPA/Hibernate):
     public Question() {
     }
 
     /**
-     * Konstruktor ohne ID für neue Fragen
+     * Instantiates a new Question.
      *
-     * @param question
-     * @param correctAnswer
-     * @param incorrectAnswers
-     * @param category
-     * @param difficulty
+     * @param question         the question
+     * @param correctAnswer    the correct answer
+     * @param incorrectAnswers the incorrect answers
+     * @param category         the category
+     * @param difficulty       the difficulty
+     * @param createdBy        the created by
      */
     public Question(String question, String correctAnswer,
                     List<String> incorrectAnswers, String category,
@@ -58,14 +65,14 @@ public class Question {
     }
 
     /**
-     * Konstruktor mit ID um bestehende Fragen zu aktualisieren oder löschen
+     * Instantiates a new Question.
      *
-     * @param id
-     * @param question
-     * @param correctAnswer
-     * @param incorrectAnswers
-     * @param category
-     * @param difficulty
+     * @param id               the id
+     * @param question         the question
+     * @param correctAnswer    the correct answer
+     * @param incorrectAnswers the incorrect answers
+     * @param category         the category
+     * @param difficulty       the difficulty
      */
     public Question(Long id, String question, String correctAnswer,
                     List<String> incorrectAnswers, String category,
@@ -78,58 +85,128 @@ public class Question {
         this.difficulty = difficulty;
     }
 
+    /**
+     * Gets created by.
+     *
+     * @return the created by
+     */
     public AppUser getCreatedBy() {
         return createdBy;
     }
 
+    /**
+     * Sets created by.
+     *
+     * @param createdBy the created by
+     */
     public void setCreatedBy(AppUser createdBy) {
         this.createdBy = createdBy;
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Gets question.
+     *
+     * @return the question
+     */
     public String getQuestion() {
         return question;
     }
 
+    /**
+     * Sets question.
+     *
+     * @param question the question
+     */
     public void setQuestion(String question) {
         this.question = question;
     }
 
+    /**
+     * Gets correct answer.
+     *
+     * @return the correct answer
+     */
     public String getCorrectAnswer() {
         return correctAnswer;
     }
 
+    /**
+     * Sets correct answer.
+     *
+     * @param correctAnswer the correct answer
+     */
     public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 
+    /**
+     * Gets incorrect answers.
+     *
+     * @return the incorrect answers
+     */
     public List<String> getIncorrectAnswers() {
         return incorrectAnswers;
     }
 
+    /**
+     * Sets incorrect answers.
+     *
+     * @param incorrectAnswers the incorrect answers
+     */
     public void setIncorrectAnswers(List<String> incorrectAnswers) {
         this.incorrectAnswers = incorrectAnswers;
     }
 
+    /**
+     * Gets category.
+     *
+     * @return the category
+     */
     public String getCategory() {
         return category;
     }
 
+    /**
+     * Sets category.
+     *
+     * @param category the category
+     */
     public void setCategory(String category) {
         this.category = category;
     }
 
+    /**
+     * Gets difficulty.
+     *
+     * @return the difficulty
+     */
     public String getDifficulty() {
         return difficulty;
     }
 
+    /**
+     * Sets difficulty.
+     *
+     * @param difficulty the difficulty
+     */
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }

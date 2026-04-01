@@ -1,5 +1,15 @@
 package com.wiss.quizbackend.entity;
 
+/**
+ * The enum Role.
+ */
 public enum Role {
-    ADMIN, PLAYER
+    /**
+     * Admin role.
+     */
+    ADMIN,
+    /**
+     * Player role.
+     */
+    PLAYER
 }

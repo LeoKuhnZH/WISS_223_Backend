@@ -18,28 +18,27 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * REST Controller für Authentication.
- * <p>
- * Controller Layer Verantwortungen:
- * - HTTP Request/Response Handling
- * - Input Validation (@Valid)
- * - Status Codes
- * - Exception Handling
- * </p>
- *
- * @RestController = @Controller + @ResponseBody
- *                   Alle Methoden returnieren JSON
+ * The type Auth controller.
  */
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:5173") // Für React Frontend
 public class AuthController {
 
+    /**
+     * The constant ERROR_TEXT_BEGINNING.
+     */
     public static final String ERROR_TEXT_BEGINNING = "error";
     // Neue Version (AppUserService + JwtService)
     private final AppUserService appUserService;
     private final JwtService jwtService;
 
+    /**
+     * Instantiates a new Auth controller.
+     *
+     * @param appUserService the app user service
+     * @param jwtService     the jwt service
+     */
     public AuthController(AppUserService appUserService,
                           JwtService jwtService) {
         this.appUserService = appUserService;
@@ -47,10 +46,10 @@ public class AuthController {
     }
 
     /**
-     * POST /api/auth/register
+     * Register response entity.
      *
-     * @Valid triggert Bean Validation (siehe RegisterRequest)
-     * @RequestBody parsed JSON zu Java Object
+     * @param request the request
+     * @return the response entity
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO request) {
@@ -89,8 +88,9 @@ public class AuthController {
     }
 
     /**
-     * GET /api/auth/test
-     * Simpler Test-Endpoint
+     * Test response entity.
+     *
+     * @return the response entity
      */
     @GetMapping("/test")
     public ResponseEntity<String> test() {
@@ -98,31 +98,10 @@ public class AuthController {
     }
 
     /**
-     * POST /api/auth/login
+     * Login response entity.
      *
-     * Authentifiziert einen User und gibt JWT Token zurück.
-     *
-     * Request Body Example:
-     * {
-     *   "usernameOrEmail": "maxmuster",
-     *   "password": "test123"
-     * }
-     *
-     * Success Response (200):
-     * {
-     *   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-     *   "tokenType": "Bearer",
-     *   "userId": 1,
-     *   "username": "maxmuster",
-     *   "email": "max@example.com",
-     *   "role": "PLAYER",
-     *   "expiresIn": 86400000
-     * }
-     *
-     * Error Response (401):
-     * {
-     *   "error": "Ungültige Anmeldedaten"
-     * }
+     * @param request the request
+     * @return the response entity
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(

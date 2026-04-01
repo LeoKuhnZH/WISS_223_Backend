@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * The type App user.
+ */
 @Entity
 @Table(name = "app_users")
 public class AppUser implements UserDetails {
@@ -30,9 +33,20 @@ public class AppUser implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    // Konstruktoren
+    /**
+     * Instantiates a new App user.
+     */
+// Konstruktoren
     public AppUser() {}
 
+    /**
+     * Instantiates a new App user.
+     *
+     * @param username the username
+     * @param email    the email
+     * @param password the password
+     * @param role     the role
+     */
     public AppUser(String username, String email, String password, Role role) {
         // id wird NICHT gesetzt - JPA kümmert sich darum!
         // version wird NICHT gesetzt - JPA kümmert sich darum!
@@ -47,20 +61,6 @@ public class AppUser implements UserDetails {
     // UserDetails Methoden (PFLICHT für Spring Security!)
     // ========================================
 
-    /**
-     * Gibt die Rollen (Authorities) des Users zurück.
-     * <p>
-     * Spring Security Konvention:
-     * - @PreAuthorize("hasRole('ADMIN')") sucht nach "ROLE_ADMIN"
-     * - Unser Enum hat: Role.ADMIN
-     * - Wir müssen "ROLE_" Prefix hinzufügen!
-     * </p>
-     * Analogie: Die Zugangsberechtigung auf dem Ausweis
-     * - "Mitarbeiter" → darf in Büros
-     * - "Security" → darf überall
-     *
-     * @return Collection mit einer Authority (z.B. "ROLE_ADMIN")
-     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // "ROLE_" Prefix für Spring Security hinzufügen
@@ -68,68 +68,26 @@ public class AppUser implements UserDetails {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
-    /**
-     * Gibt das verschlüsselte Passwort zurück.
-     * Wichtig: Das ist KEIN Klartext, sondern ein BCrypt Hash!
-     * <p>
-     * Analogie: Die Geheimzahl auf dem Ausweis-Chip
-     * - Nicht lesbar für Menschen
-     * - Nur das Lesegerät kann sie prüfen
-     * </p>
-     * @return BCrypt Hash des Passworts
-     */
     @Override
     public String getPassword() {
         return password;
     }
 
-    /**
-     * Gibt den Benutzernamen zurück.
-     * Analogie: Der Name auf dem Ausweis
-     *
-     * @return Username des Users
-     */
     @Override
     public String getUsername() {
         return username;
     }
 
-    /**
-     * Ist das Konto nicht abgelaufen?
-     * Wir implementieren KEINE Ablauf-Logik → immer true
-     *
-     * Analogie: "Gültig bis"-Datum auf dem Ausweis
-     * - Wir haben kein Ablaufdatum → immer gültig
-     *
-     * @return true (Konto läuft nie ab)
-     */
     @Override
     public boolean isAccountNonExpired() {
         return true; // Keine Ablauflogik implementiert
     }
 
-    /**
-     * Ist das Konto nicht gesperrt?
-     * Wir implementieren KEINE Sperr-Logik → immer true
-     *
-     * Analogie: Ausweis wurde nicht gesperrt
-     * - Kein "Gesperrt"-Stempel drauf
-     *
-     * @return true (Konto ist nie gesperrt)
-     */
     @Override
     public boolean isAccountNonLocked() {
         return true; // Keine Sperrlogik implementiert
     }
 
-    /**
-     * Ist das Passwort nicht abgelaufen?
-     * Wir implementieren KEINE Passwort-Rotation → immer true
-     *
-     * Analogie: Passwort muss nicht alle 90 Tage geändert werden
-     *
-     * @return true (Passwort läuft nie ab)
-     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true; // Passwörter laufen nicht ab
@@ -137,34 +95,74 @@ public class AppUser implements UserDetails {
 
     // Getter und Setter
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Sets username.
+     *
+     * @param username the username
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Gets email.
+     *
+     * @return the email
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Sets email.
+     *
+     * @param email the email
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * Sets password.
+     *
+     * @param password the password
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Gets role.
+     *
+     * @return the role
+     */
     public Role getRole() {
         return role;
     }
 
+    /**
+     * Sets role.
+     *
+     * @param role the role
+     */
     public void setRole(Role role) {
         this.role = role;
     }

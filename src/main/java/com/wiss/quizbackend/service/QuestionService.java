@@ -13,25 +13,49 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The type Question service.
+ */
 @Service
 public class QuestionService {
     private final QuestionRepository repository;
 
+    /**
+     * Instantiates a new Question service.
+     *
+     * @param repository the repository
+     */
     public QuestionService(QuestionRepository repository) {
         this.repository = repository;
     }
 
-    // Neue DTO-basierte Methoden
+    /**
+     * Gets all questions as dto.
+     *
+     * @return the all questions as dto
+     */
+// Neue DTO-basierte Methoden
     public List<QuestionDTO> getAllQuestionsAsDTO() {
         List<Question> entities = repository.findAll();
         return QuestionMapper.toDTOList(entities);
     }
 
+    /**
+     * Gets all questions as form dto.
+     *
+     * @return the all questions as form dto
+     */
     public List<QuestionFormDTO> getAllQuestionsAsFormDTO() {
         List<Question> entities = repository.findAll();
         return QuestionMapper.toFormDTOList(entities);
     }
 
+    /**
+     * Gets question by id as dto.
+     *
+     * @param id the id
+     * @return the question by id as dto
+     */
     public QuestionDTO getQuestionByIdAsDTO(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Question ID cannot be null");
@@ -45,6 +69,12 @@ public class QuestionService {
         return QuestionMapper.toDTO(entity);
     }
 
+    /**
+     * Gets question by id as form dto.
+     *
+     * @param id the id
+     * @return the question by id as form dto
+     */
     public QuestionFormDTO getQuestionByIdAsFormDTO(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Question ID cannot be null");
@@ -58,20 +88,43 @@ public class QuestionService {
         return QuestionMapper.toFormDTO(entity);
     }
 
+    /**
+     * Gets questions by category as dto.
+     *
+     * @param category the category
+     * @return the questions by category as dto
+     */
     public List<QuestionDTO> getQuestionsByCategoryAsDTO(String category) {
         List<Question> entities = getQuestionsByCategory(category);
         return QuestionMapper.toDTOList(entities);
     }
 
+    /**
+     * Gets questions by difficulty as dto.
+     *
+     * @param difficulty the difficulty
+     * @return the questions by difficulty as dto
+     */
     public List<QuestionDTO> getQuestionsByDifficultyAsDTO(String difficulty) {
         List<Question> entities = getQuestionsByDifficulty(difficulty);
         return QuestionMapper.toDTOList(entities);
     }
 
+    /**
+     * Gets all questions.
+     *
+     * @return the all questions
+     */
     public List<Question> getAllQuestions() {
         return repository.findAll();
     }
 
+    /**
+     * Gets question by id.
+     *
+     * @param id the id
+     * @return the question by id
+     */
     public Question getQuestionById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("ID cannot be null");
@@ -85,26 +138,42 @@ public class QuestionService {
         return optionalQuestion.get();
     }
 
+    /**
+     * Gets questions by category.
+     *
+     * @param category the category
+     * @return the questions by category
+     */
     public List<Question> getQuestionsByCategory(String category) {
         validateCategory(category);
         return repository.findByCategory(category.toLowerCase());
     }
 
+    /**
+     * Gets questions by difficulty.
+     *
+     * @param difficulty the difficulty
+     * @return the questions by difficulty
+     */
     public List<Question> getQuestionsByDifficulty(String difficulty) {
         validateDifficulty(difficulty);
         return repository.findByDifficulty(difficulty.toLowerCase());
     }
 
+    /**
+     * Gets total questions count.
+     *
+     * @return the total questions count
+     */
     public long getTotalQuestionsCount() {
         return repository.count();
     }
 
     /**
-     * Create a new question
-     * using save method without existing ID
+     * Create question question dto.
      *
-     * @param questionDTO
-     * @return
+     * @param questionDTO the question dto
+     * @return the question dto
      */
     public QuestionDTO createQuestion(QuestionDTO questionDTO) {
         // Validierung
@@ -126,10 +195,10 @@ public class QuestionService {
     }
 
     /**
-     * Create a new Question from the Frontend-Form
+     * Create question from form question form dto.
      *
-     * @param question The question designed for collecting Question data
-     * @return A question Form DTO that can be used in the Question Manager
+     * @param question the question
+     * @return the question form dto
      */
     public QuestionFormDTO createQuestionFromForm(Question question) {
         Question saved = repository.save(question);
@@ -137,12 +206,11 @@ public class QuestionService {
     }
 
     /**
-     * Update a question
-     * using save method with an existing ID
+     * Update question question dto.
      *
-     * @param id
-     * @param questionDTO
-     * @return
+     * @param id          the id
+     * @param questionDTO the question dto
+     * @return the question dto
      */
     public QuestionDTO updateQuestion(Long id, QuestionDTO questionDTO) {
         // 1. Prüfen ob Frage existiert (repository.existsById())
@@ -158,6 +226,13 @@ public class QuestionService {
         return QuestionMapper.toDTO(updatedEntity);
     }
 
+    /**
+     * Update question from form question form dto.
+     *
+     * @param id       the id
+     * @param question the question
+     * @return the question form dto
+     */
     public QuestionFormDTO updateQuestionFromForm(Long id, Question question) {
         // Prüfen ob Frage existiert
         if (!repository.existsById(id)) {
@@ -171,11 +246,9 @@ public class QuestionService {
     }
 
     /**
-     * Delete a Question
-     * using the id to identify the question
+     * Delete question.
      *
-     * @param id
-     * @return
+     * @param id the id
      */
     public void deleteQuestion(Long id) {
         // 1. Prüfen ob Frage existiert
@@ -187,6 +260,13 @@ public class QuestionService {
         repository.deleteById(id);
     }
 
+    /**
+     * Gets questions by category and difficulty.
+     *
+     * @param category   the category
+     * @param difficulty the difficulty
+     * @return the questions by category and difficulty
+     */
     public List<QuestionDTO> getQuestionsByCategoryAndDifficulty(String category, String difficulty) {
         validateCategory(category);
         validateDifficulty(difficulty);
@@ -195,6 +275,12 @@ public class QuestionService {
         return QuestionMapper.toDTOList(entities);
     }
 
+    /**
+     * Search questions list.
+     *
+     * @param keyword the keyword
+     * @return the list
+     */
     public List<QuestionDTO> searchQuestions(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new IllegalArgumentException("Search keyword cannot be empty");
@@ -204,11 +290,23 @@ public class QuestionService {
         return QuestionMapper.toDTOList(entities);
     }
 
+    /**
+     * Gets question count by category.
+     *
+     * @param category the category
+     * @return the question count by category
+     */
     public long getQuestionCountByCategory(String category) {
         validateCategory(category);
         return repository.countByCategory(category);
     }
 
+    /**
+     * Gets random questions.
+     *
+     * @param limit the limit
+     * @return the random questions
+     */
     public List<QuestionDTO> getRandomQuestions(int limit) {
         if (limit <= 0 || limit > 50) {
             throw new IllegalArgumentException("Limit must be between 1 and 50");
@@ -218,6 +316,13 @@ public class QuestionService {
         return QuestionMapper.toDTOList(entities);
     }
 
+    /**
+     * Gets random questions by category.
+     *
+     * @param category the category
+     * @param limit    the limit
+     * @return the random questions by category
+     */
     public List<QuestionDTO> getRandomQuestionsByCategory(String category, int limit) {
         validateCategory(category);
         if (limit <= 0 || limit > 50) {

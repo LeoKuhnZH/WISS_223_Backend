@@ -10,16 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 /**
- * Service Layer für User-Management.
- * <p>
- * Warum Service Layer?
- * - Trennung von Business Logic und Web Layer (Controller)
- * - Wiederverwendbar (könnte von REST, GraphQL, CLI genutzt werden)
- * - Transactions-Management
- * - Einfacher zu testen (Unit-Tests)
- * </p>
- * @Service: Spring erstellt automatisch eine Instanz (Component Scanning)
- * @Transactional: Alle Methoden laufen in einer DB-Transaktion
+ * The type App user service.
  */
 @Service
 @Transactional
@@ -30,11 +21,10 @@ public class AppUserService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * Constructor Injection statt @Autowired auf Felder
-     * Warum?
-     * - Explizit welche Dependencies benötigt werden
-     * - Einfacher zu testen (Mock-Objekte im Test)
-     * - Immutable (final fields)
+     * Instantiates a new App user service.
+     *
+     * @param userRepository  the user repository
+     * @param passwordEncoder the password encoder
      */
     public AppUserService(AppUserRepository userRepository,
                           PasswordEncoder passwordEncoder) {
@@ -43,14 +33,13 @@ public class AppUserService {
     }
 
     /**
-     * Registriert einen neuen User.
-     * <p>
-     * Business Logic:
-     * 1. Validierung (Username/Email unique?)
-     * 2. Password hashen
-     * 3. User speichern
-     * 4. Gespeicherten User zurückgeben (mit ID!)
-     * </p>
+     * Register user app user.
+     *
+     * @param username    the username
+     * @param email       the email
+     * @param rawPassword the raw password
+     * @param role        the role
+     * @return the app user
      */
     public AppUser registerUser(String username, String email,
                                 String rawPassword, Role role) {
@@ -81,16 +70,21 @@ public class AppUserService {
     }
 
     /**
-     * Findet User by Username (für Login später)
+     * Find by username optional.
+     *
+     * @param username the username
+     * @return the optional
      */
     public Optional<AppUser> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     /**
-     * Authentifiziert User (Vorbereitung für Login)
+     * Authenticate user optional.
      *
-     * @return Optional.empty() wenn Login fehlschlägt
+     * @param username    the username
+     * @param rawPassword the raw password
+     * @return the optional
      */
     public Optional<AppUser> authenticateUser(String username, String rawPassword) {
         // User suchen
@@ -108,9 +102,6 @@ public class AppUserService {
         return Optional.empty();  // Login fehlgeschlagen
     }
 
-    /**
-     * Hilfsmethode: Prüft ob Email valid ist
-     */
     private boolean isValidEmail(String email) {
         return email != null &&
                 email.contains("@") &&
@@ -118,12 +109,10 @@ public class AppUserService {
     }
 
     /**
-     * Findet einen User by Email.
+     * Find by email optional.
      *
-     * Wird benötigt für Login mit Email.
-     *
-     * @param email Die Email
-     * @return Optional mit User oder empty
+     * @param email the email
+     * @return the optional
      */
     public Optional<AppUser> findByEmail(String email) {
         return userRepository.findByEmail(email);

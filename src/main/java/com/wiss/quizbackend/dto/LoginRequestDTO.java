@@ -3,17 +3,7 @@ package com.wiss.quizbackend.dto;
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * DTO für Login Requests.
- *
- * Zweck:
- * - Input von Login-Formular empfangen
- * - Basic Validation durchführen
- * - Flexibel: Username ODER Email akzeptieren
- *
- * Warum "usernameOrEmail"?
- * - User können sich mit beidem einloggen
- * - Einfacher für den User (muss sich nicht merken, was er verwendet hat)
- * - Backend prüft dann, ob es Email oder Username ist
+ * The type Login request dto.
  */
 public class LoginRequestDTO {
 
@@ -23,39 +13,62 @@ public class LoginRequestDTO {
     @NotBlank(message = "Passwort ist erforderlich")
     private String password;
 
-    // Default Constructor für JSON Deserialization
+    /**
+     * Instantiates a new Login request dto.
+     */
+// Default Constructor für JSON Deserialization
     public LoginRequestDTO() {}
 
-    // Constructor mit allen Feldern (für Tests)
+    /**
+     * Instantiates a new Login request dto.
+     *
+     * @param usernameOrEmail the username or email
+     * @param password        the password
+     */
+// Constructor mit allen Feldern (für Tests)
     public LoginRequestDTO(String usernameOrEmail, String password) {
         this.usernameOrEmail = usernameOrEmail;
         this.password = password;
     }
 
-    // Getters und Setters
+    /**
+     * Gets username or email.
+     *
+     * @return the username or email
+     */
+// Getters und Setters
     public String getUsernameOrEmail() {
         return usernameOrEmail;
     }
 
 
-
+    /**
+     * Sets username or email.
+     *
+     * @param usernameOrEmail the username or email
+     */
     public void setUsernameOrEmail(String usernameOrEmail) {
         this.usernameOrEmail = usernameOrEmail;
     }
 
+    /**
+     * Gets password.
+     *
+     * @return the password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Sets password.
+     *
+     * @param password the password
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    /**
-     * toString OHNE Passwort (Security!)
-     *
-     * NIEMALS Passwörter in Logs!
-     */
     @Override
     public String toString() {
         return "LoginRequestDTO{" +

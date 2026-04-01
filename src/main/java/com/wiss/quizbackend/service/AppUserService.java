@@ -116,4 +116,16 @@ public class AppUserService {
                 email.contains("@") &&
                 email.length() > 3;
     }
+
+    /**
+     * Findet einen User by Email.
+     *
+     * Wird benötigt für Login mit Email.
+     *
+     * @param email Die Email
+     * @return Optional mit User oder empty
+     */
+    public Optional<AppUser> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
